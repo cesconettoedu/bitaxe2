@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -18,46 +18,48 @@ const cardMargin = 20;
 const cardWidth = (screenWidth - (numColumns + 2) * cardMargin) / numColumns;
 
 export default function Home({ navigation }) {
-  const data = [
-    {
-      id: "1",
-      work: "connected",
-      title: "Gamma1",
-      hash: "120 TH/s",
-      AsicT: "50°C",
-      VrT: "65°C",
-      value4: "XX",
-    },
-    {
-      id: "2",
-      work: "connected",
-      title: "Gamma1",
-      hash: "120 TH/s",
-      AsicT: "50°C",
-      VrT: "65°C",
-      value4: "XX",
-    },
-    {
-      id: "3",
-      work: "connected",
-      title: "Gamma1",
-      hash: "120 TH/s",
-      AsicT: "50°C",
-      VrT: "65°C",
-      value4: "XX",
-    },
-    // {
-    //   id: "4",
-    //   work: "connected",
-    //   title: "Gamma1",
-    //   hash: "120 TH/s",
-    //   AsicT: "50°C",
-    //   VrT: "65°C",
-    //   value4: "XX",
-    // },
-  ];
-
+  // const data = [
+  //   {
+  //     id: "1",
+  //     work: "connected",
+  //     title: "Gamma1",
+  //     hash: "120 TH/s",
+  //     AsicT: "50°C",
+  //     VrT: "65°C",
+  //     value4: "XX",
+  //   },
+  //   {
+  //     id: "2",
+  //     work: "connected",
+  //     title: "Gamma1",
+  //     hash: "120 TH/s",
+  //     AsicT: "50°C",
+  //     VrT: "65°C",
+  //     value4: "XX",
+  //   },
+  //   {
+  //     id: "3",
+  //     work: "connected",
+  //     title: "Gamma1",
+  //     hash: "120 TH/s",
+  //     AsicT: "50°C",
+  //     VrT: "65°C",
+  //     value4: "XX",
+  //   },
+  // ];
+  const [data, setData] = useState(null); // 'e como esta voltando a data do fetch tenho que acertar
   const [text, setText] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://10.0.0.163/api/system/info");
+      const json = await response.json();
+      setData(json);
+      formatHashrate(data.hashRate);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  };
 
   const addItem = async () => {
     if (!text.trim()) return Alert.alert("Digite algo válido.");
@@ -84,6 +86,20 @@ export default function Home({ navigation }) {
       </TouchableOpacity>
     </View>
   );
+
+  useEffect(() => {
+    fetchData();
+    const intervalId = setInterval(fetchData, 4000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  if (!data) {
+    return (
+      <View style={styles.center}>
+        <Text>Carregando informações do sistema...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
