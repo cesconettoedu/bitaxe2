@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { getItems, saveItems } from "../utils/storage";
 
-export default function PaginaIP() {
+export default function PaginaIP({ navigation, route }) {
   const [items, setItems] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
@@ -21,14 +21,15 @@ export default function PaginaIP() {
   };
 
   useEffect(() => {
-    const unsubscribe = loadItems();
-    return () => unsubscribe;
+    loadItems();
   }, []);
 
   const deleteItem = async (id) => {
     const newItems = items.filter((item) => item.id !== id);
     await saveItems(newItems);
     setItems(newItems);
+    // Atualiza Home ao retornar
+    route.params?.onReturn?.();
   };
 
   const startEdit = (item) => {
@@ -44,6 +45,9 @@ export default function PaginaIP() {
     setItems(updated);
     setEditingId(null);
     setEditingText("");
+
+    // Atualiza Home ao retornar
+    route.params?.onReturn?.();
   };
 
   return (
@@ -89,9 +93,9 @@ const styles = StyleSheet.create({
   holeInput: { flexDirection: "row", justifyContent: "space-between" },
   input: { borderWidth: 1, padding: 5, marginBottom: 5 },
   buttonRow: {
-    flexDirection: "row", // Deixa os itens lado a lado
-    justifyContent: "space-between", // Espaçamento entre eles
-    gap: 10, // Se estiver usando React Native 0.71+
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
   },
   text: { fontSize: 16, alignSelf: "center" },
 });

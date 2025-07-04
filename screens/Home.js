@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Text,
-  Linking, // ← IMPORTANTE: Adicionado
+  Linking,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { saveItems, getItems } from "../utils/storage";
@@ -24,6 +24,7 @@ export default function Home({ navigation }) {
   const [data, setData] = useState([]);
   const [text, setText] = useState("");
   const [storedItems, setStoredItems] = useState([]);
+  const [refreshing, setRefreshing] = useState(false); // 👈 Novo estado
 
   const loadStoredItems = async () => {
     const items = await getItems();
@@ -55,6 +56,13 @@ export default function Home({ navigation }) {
     }
   };
 
+  // 👇 Novo: Função de refresh ao puxar
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchDataFromAllIps();
+    setRefreshing(false);
+  };
+
   const addIp = async () => {
     if (!text.trim()) return Alert.alert("Digite algo válido.");
     const currentItems = await getItems();
@@ -72,7 +80,6 @@ export default function Home({ navigation }) {
     return () => clearInterval(intervalId);
   }, []);
 
-  // 🔗 Abre o IP no navegador
   const openInBrowser = (ip) => {
     const url = `http://${ip}`;
     Linking.openURL(url).catch((err) =>
@@ -128,7 +135,11 @@ export default function Home({ navigation }) {
           <Button title="Add" onPress={addIp} />
           <Button
             title="List"
-            onPress={() => navigation.navigate("PaginaIP")}
+            onPress={() =>
+              navigation.navigate("PaginaIP", {
+                onReturn: () => fetchDataFromAllIps(), // 👈 função que atualiza a Home
+              })
+            }
           />
         </View>
       </View>
@@ -140,6 +151,8 @@ export default function Home({ navigation }) {
         renderItem={({ item }) => <ItemCard item={item} />}
         numColumns={numColumns}
         ListEmptyComponent={<Text>Nenhum dado carregado.</Text>}
+        refreshing={refreshing} // 👈 pull to refresh
+        onRefresh={handleRefresh} // 👈 função chamada ao puxar
       />
     </View>
   );

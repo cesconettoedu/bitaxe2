@@ -20,10 +20,20 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.cesconettoedu.bitaxe2",
+      "permissions": ["INTERNET"],
+      "config": {
+        "cleartextTraffic": true
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6631fea1-f39f-4e79-8c0b-8c1ee86dff99"
+      }
     }
   }
 }
