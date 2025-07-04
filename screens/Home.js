@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Text,
+  Linking, // ← IMPORTANTE: Adicionado
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { saveItems, getItems } from "../utils/storage";
@@ -20,23 +21,20 @@ const cardMargin = 20;
 const cardWidth = (screenWidth - (numColumns + 2) * cardMargin) / numColumns;
 
 export default function Home({ navigation }) {
-  const [data, setData] = useState([]); // aqui guardaremos array com dados de todos IPs
+  const [data, setData] = useState([]);
   const [text, setText] = useState("");
   const [storedItems, setStoredItems] = useState([]);
 
-  // Função que carrega IPs do AsyncStorage e salva no estado
   const loadStoredItems = async () => {
     const items = await getItems();
     setStoredItems(items);
   };
 
-  // Função que faz fetch em TODOS os IPs e guarda resultado em 'data'
   const fetchDataFromAllIps = async () => {
     try {
-      const items = await getItems(); // carrega IPs
+      const items = await getItems();
       setStoredItems(items);
 
-      // Promise.all para buscar em paralelo
       const results = await Promise.all(
         items.map(async (item) => {
           const ip = item.text;
@@ -57,10 +55,8 @@ export default function Home({ navigation }) {
     }
   };
 
-  // Adicionar novo IP ao AsyncStorage e atualizar lista
   const addIp = async () => {
     if (!text.trim()) return Alert.alert("Digite algo válido.");
-
     const currentItems = await getItems();
     const updatedItems = [...currentItems, { id: Date.now(), text }];
     await saveItems(updatedItems);
@@ -70,14 +66,20 @@ export default function Home({ navigation }) {
     Alert.alert("Adicionado!");
   };
 
-  // Atualizar lista e dados a cada 4 segundos
   useEffect(() => {
     fetchDataFromAllIps();
     const intervalId = setInterval(fetchDataFromAllIps, 4000);
     return () => clearInterval(intervalId);
   }, []);
 
-  // Componente para renderizar cada item do FlatList
+  // 🔗 Abre o IP no navegador
+  const openInBrowser = (ip) => {
+    const url = `http://${ip}`;
+    Linking.openURL(url).catch((err) =>
+      console.error("Erro ao abrir o navegador:", err)
+    );
+  };
+
   const ItemCard = ({ item }) => {
     if (item.error) {
       return (
@@ -96,8 +98,9 @@ export default function Home({ navigation }) {
 
     return (
       <View style={{ width: cardWidth, margin: cardMargin / 2 }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => openInBrowser(item.ip)}>
           <Infocard
+            work={item.data?.wifiStatus || "off"}
             title={`${item.data.stratumUser}`}
             ipIndividual={item?.ip || "N/A"}
             hash={item.data?.hashRate || "N/A"}

@@ -1,7 +1,15 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const Infocard = ({ title, ipIndividual, hash, AsicT, VrT, InputVol }) => {
+const Infocard = ({
+  work,
+  title,
+  ipIndividual,
+  hash,
+  AsicT,
+  VrT,
+  InputVol,
+}) => {
   function formatHashrate(hash) {
     if (hash >= 1000) return (hash / 1000).toFixed(2) + " TH/s";
     if (hash <= 999) return hash.toFixed(2) + " GH/s";
@@ -13,7 +21,10 @@ const Infocard = ({ title, ipIndividual, hash, AsicT, VrT, InputVol }) => {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{title.replace("duducesc.", "")}</Text>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Text style={styles.title}>{title.replace("duducesc.", "")}</Text>
+        <Text>{(work = "Connected!" ? "🟢" : "🔴")}</Text>
+      </View>
       <Text style={styles.titleIp}>IP: {ipIndividual}</Text>
       <Text style={styles.value}>{formatHashrate(hash)}</Text>
       <Text style={styles.value}>Asic T: {AsicT.toFixed(1)} °C</Text>
