@@ -99,11 +99,11 @@ export default function Home({ navigation }) {
         <TouchableOpacity>
           <Infocard
             title={`${item.data.stratumUser}`}
-            work={item.data?.work || "N/A"}
+            ipIndividual={item?.ip || "N/A"}
             hash={item.data?.hashRate || "N/A"}
             AsicT={item.data?.temp || "N/A"}
-            VrT={item.data?.VrT || "N/A"}
-            value4={item.data?.value4 || "N/A"}
+            VrT={item.data?.vrTemp || "N/A"}
+            InputVol={item.data?.voltage || "N/A"}
           />
         </TouchableOpacity>
       </View>
