@@ -6,6 +6,7 @@ const Infocard = ({
   title,
   ipIndividual,
   hash,
+  bestSesionDif,
   AsicT,
   VrT,
   InputVol,
@@ -21,15 +22,20 @@ const Infocard = ({
 
   return (
     <View style={styles.card}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View style={styles.inline}>
         <Text style={styles.title}>{title.replace("duducesc.", "")}</Text>
-        <Text>{(work = "Connected!" ? "🟢" : "🔴")}</Text>
+        <Text style={styles.statusIcon}>
+          {work === "Connected!" ? "🟢" : "🔴"}
+        </Text>
       </View>
       <Text style={styles.titleIp}>IP: {ipIndividual}</Text>
-      <Text style={styles.value}>{formatHashrate(hash)}</Text>
-      <Text style={styles.value}>Asic T: {AsicT.toFixed(1)} °C</Text>
-      <Text style={styles.value}>VoltR T: {VrT.toFixed(1)} °C</Text>
-      <Text>{(InputVol / 1000).toFixed(1)} V</Text>
+      <View style={styles.inline}>
+        <Text style={styles.value}>{formatHashrate(hash)}</Text>
+        <Text>{(InputVol / 1000).toFixed(1)} V</Text>
+      </View>
+      <Text style={styles.value}>A: {AsicT.toFixed(1)} °C</Text>
+      <Text style={styles.value}>Vr: {VrT.toFixed(1)} °C</Text>
+      <Text style={styles.value}>Best Diff: {bestSesionDif}</Text>
     </View>
   );
 };
@@ -59,6 +65,15 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 14,
     color: "#555",
+  },
+  inline: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  statusIcon: {
+    flex: 1,
+    textAlign: "right",
   },
 });
 

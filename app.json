@@ -1,39 +1,58 @@
 {
   "expo": {
-    "name": "bitaxe2",
-    "slug": "bitaxe2",
+    "name": "MinerCheck",
+    "slug": "MinerCheck",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/grafbitaxe.png",  
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/grafbitaxe.png",  
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FFFFFF"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.cesconettoedu.bitaxe2",
-      "permissions": ["INTERNET"],
-      "config": {
-        "cleartextTraffic": true
-      }
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE"
+      ],
+
+      "package": "com.cesconettoedu.MinerCheck"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "6631fea1-f39f-4e79-8c0b-8c1ee86dff99"
+        "projectId": "8d1fe7d3-ea3d-4859-9361-9348ea660385"
       }
-    }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/8d1fe7d3-ea3d-4859-9361-9348ea660385"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ]
   }
 }
