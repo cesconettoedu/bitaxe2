@@ -54,22 +54,35 @@ export default function PaginaIP({ navigation, route }) {
     <View style={styles.container}>
       <FlatList
         data={items}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            {editingId === item.id ? (
-              <>
-                <TextInput
-                  style={styles.input}
-                  value={editingText}
-                  onChangeText={setEditingText}
-                />
-                <Button title="Salvar" onPress={saveEdit} />
-              </>
-            ) : (
-              <>
+        keyExtractor={(item, index) =>
+          item?.id ? item.id.toString() : index.toString()
+        }
+        renderItem={({ item }) => {
+          const isEditing = editingId === item.id;
+
+          return (
+            <View style={styles.item}>
+              {isEditing ? (
+                // Apenas UM bloco de edição
+                <View>
+                  <TextInput
+                    style={styles.input}
+                    value={editingText}
+                    onChangeText={setEditingText}
+                  />
+                  <View style={styles.buttonRow}>
+                    <Button title="Salvar" onPress={saveEdit} />
+                    <Button
+                      title="Cancelar"
+                      onPress={() => setEditingId(null)}
+                    />
+                  </View>
+                </View>
+              ) : (
+                // Apenas UM bloco visual
                 <View style={styles.holeInput}>
                   <Text style={styles.text}>{item.text}</Text>
+                  {/* <Text style={styles.text}>name:{item.text}</Text> */}
                   <View style={styles.buttonRow}>
                     <Button title="Editar" onPress={() => startEdit(item)} />
                     <Button
@@ -78,10 +91,10 @@ export default function PaginaIP({ navigation, route }) {
                     />
                   </View>
                 </View>
-              </>
-            )}
-          </View>
-        )}
+              )}
+            </View>
+          );
+        }}
       />
     </View>
   );
@@ -89,13 +102,32 @@ export default function PaginaIP({ navigation, route }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
-  item: { padding: 10, borderBottomWidth: 1, marginBottom: 10 },
-  holeInput: { flexDirection: "row", justifyContent: "space-between" },
-  input: { borderWidth: 1, padding: 5, marginBottom: 5 },
-  buttonRow: {
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    marginBottom: 10,
+  },
+  holeInput: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 10,
+    alignItems: "center",
   },
-  text: { fontSize: 16, alignSelf: "center" },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 8,
+    fontSize: 16,
+    marginBottom: 10,
+    borderRadius: 8,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 5,
+  },
+  text: {
+    fontSize: 16,
+    flexShrink: 1,
+  },
 });
