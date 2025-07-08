@@ -6,7 +6,7 @@ const Infocard = ({
   title,
   ipIndividual,
   hash,
-  bestSesionDif,
+  bestSesionDiff,
   AsicT,
   VrT,
   InputVol,
@@ -35,7 +35,7 @@ const Infocard = ({
       </View>
       <Text style={styles.value}>A: {AsicT.toFixed(1)} °C</Text>
       <Text style={styles.value}>Vr: {VrT.toFixed(1)} °C</Text>
-      <Text style={styles.value}>Best Diff: {bestSesionDif}</Text>
+      <Text style={styles.value}>Best Diff: {bestSesionDiff}</Text>
     </View>
   );
 };

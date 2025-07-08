@@ -28,6 +28,7 @@ export default function Home({ navigation }) {
   const [storedItems, setStoredItems] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [networkStatus, setNetworkStatus] = useState(null);
+  const [countdown, setCountdown] = useState(10);
 
   const checkNetworkConnection = async () => {
     try {
@@ -225,11 +226,17 @@ export default function Home({ navigation }) {
     const intervalId = setInterval(() => {
       console.log("Performing automatic search...");
       fetchDataFromAllIps();
-    }, 10000); // Aumentei para 10 segundos para evitar sobrecarga
+      setCountdown(10); // reseta contador após cada fetch
+    }, 10000);
+
+    const countdownInterval = setInterval(() => {
+      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
 
     return () => {
-      console.log("Clearing range");
+      console.log("Clearing intervals");
       clearInterval(intervalId);
+      clearInterval(countdownInterval);
     };
   }, []);
 
@@ -302,7 +309,7 @@ export default function Home({ navigation }) {
             title={`${item.data?.stratumUser || "N/A"}`}
             ipIndividual={item?.ip || "N/A"}
             hash={item.data?.hashRate || "N/A"}
-            bestSesionDif={item.data?.bestSessionDiff || "N/A"}
+            bestSesionDiff={item.data?.bestSessionDiff || "N/A"}
             AsicT={item.data?.temp || "N/A"}
             VrT={item.data?.vrTemp || "N/A"}
             InputVol={item.data?.voltage || "N/A"}
@@ -367,6 +374,18 @@ export default function Home({ navigation }) {
             Rede: {networkStatus.type} |{" "}
             {networkStatus.isConnected ? "Conected" : "Desconected"}
           </Text>
+          {networkStatus?.isConnected && (
+            <Text
+              style={{
+                fontSize: 12,
+                color: "#555",
+                marginBottom: 8,
+                alignSelf: "center",
+              }}
+            >
+              Refresh: {countdown}s
+            </Text>
+          )}
         </View>
       )}
 
