@@ -97,7 +97,7 @@ export default function Home({ navigation }) {
       if (error.name === "Abort Error") {
         errorMessage = "Timeout - Server did not respond";
       } else if (error.name === "TypeError") {
-        errorMessage = "Erro de rede - Verifique IP e conectividade";
+        errorMessage = "Network Error - Check IP and Connectivity";
       } else if (error.message.includes("HTTP error")) {
         errorMessage = `Erro HTTP: ${error.message}`;
       } else {
@@ -165,7 +165,7 @@ export default function Home({ navigation }) {
       console.log(`=== DIAGNOSTIC TEST FOR${ip} ===`);
 
       // Teste 1: Ping básico usando fetch simples
-      console.log("Teste 1: Requisição GET básica");
+      console.log("Test 1: Basic GET Request");
       const response = await fetch(`http://${ip}/api/system/info`, {
         method: "GET",
         headers: {
@@ -180,33 +180,30 @@ export default function Home({ navigation }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Dados recebidos:", data);
+        console.log("Data received:", data);
         Alert.alert(
-          "Sucesso!",
-          `Conectividade OK com ${ip}\nStatus: ${response.status}`
+          "Success!",
+          `Connectivity OK with ${ip}\nStatus: ${response.status}`
         );
       } else {
         Alert.alert("Erro HTTP", `Status: ${response.status}`);
       }
     } catch (error) {
-      console.error("Erro no teste diagnóstico:", error);
+      console.error("Diagnostic test error:", error);
       Alert.alert(
-        "Erro de Conectividade",
+        "Connectivity Error",
         `Erro: ${error.message}\nTipo: ${error.name}`
       );
     }
   };
 
   const addIp = async () => {
-    if (!text.trim()) return Alert.alert("Digite algo válido.");
+    if (!text.trim()) return Alert.alert("Enter something valid.");
 
     // Valida formato básico de IP
     const ipPattern = /^(\d{1,3}\.){3}\d{1,3}(:\d+)?$/;
     if (!ipPattern.test(text.trim())) {
-      return Alert.alert(
-        "IP inválido",
-        "Digite um IP válido (ex: 192.168.1.100)"
-      );
+      return Alert.alert("Invalid IP", "Enter a valid IP (ex: 192.168.1.100)");
     }
 
     const currentItems = await getItems();
@@ -218,29 +215,29 @@ export default function Home({ navigation }) {
     setText("");
     await loadStoredItems();
     await fetchDataFromAllIps();
-    Alert.alert("Adicionado!");
+    Alert.alert("Added!");
   };
 
   useEffect(() => {
-    console.log("Componente montado, iniciando busca inicial...");
+    console.log("Component assembled, starting initial search...");
     fetchDataFromAllIps();
 
     const intervalId = setInterval(() => {
-      console.log("Executando busca automática...");
+      console.log("Performing automatic search...");
       fetchDataFromAllIps();
     }, 10000); // Aumentei para 10 segundos para evitar sobrecarga
 
     return () => {
-      console.log("Limpando intervalo");
+      console.log("Clearing range");
       clearInterval(intervalId);
     };
   }, []);
 
   const openInBrowser = (ip) => {
     const url = `http://${ip}`;
-    console.log(`Abrindo no navegador: ${url}`);
+    console.log(`Opening in browser: ${url}`);
     Linking.openURL(url).catch((err) =>
-      console.error("Erro ao abrir o navegador:", err)
+      console.error("Error opening browser:", err)
     );
   };
 
@@ -271,7 +268,7 @@ export default function Home({ navigation }) {
               marginTop: 5,
             }}
           >
-            {item.errorMessage || "Servidor não acessível"}
+            {item.errorMessage || "Server not accessible"}
           </Text>
           <TouchableOpacity
             onPress={() =>
@@ -381,7 +378,7 @@ export default function Home({ navigation }) {
         numColumns={numColumns}
         ListEmptyComponent={
           <Text style={styles.emptyText}>
-            Nenhum dado carregado. Adicione IPs para começar.
+            No data loaded. Add IPs to get started.
           </Text>
         }
         refreshing={refreshing}
@@ -396,7 +393,7 @@ const styles = StyleSheet.create({
 
   containerFlat: {
     marginTop: 10,
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   networkStatus: {
     backgroundColor: "#e8f5e8",
@@ -418,6 +415,7 @@ const styles = StyleSheet.create({
   ///////////
   inputWrapper: {
     marginBottom: 15,
+    alignItems: "center",
   },
 
   inputContainer: {
