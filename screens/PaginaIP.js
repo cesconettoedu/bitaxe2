@@ -82,7 +82,6 @@ export default function PaginaIP({ navigation, route }) {
                 // Apenas UM bloco visual
                 <View style={styles.holeInput}>
                   <Text style={styles.text}>{item.text}</Text>
-                  {/* <Text style={styles.text}>name:{item.text}</Text> */}
                   <View style={styles.buttonRow}>
                     <Button title="Editar" onPress={() => startEdit(item)} />
                     <Button
