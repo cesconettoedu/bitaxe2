@@ -36,7 +36,7 @@ export default function Home({ navigation }) {
     try {
       const state = await NetInfo.fetch();
       setNetworkStatus(state);
-      console.log("Network state:", state);
+      //console.log("Network state:", state);
 
       if (!state.isConnected) {
         Alert.alert("NO internet connection");
@@ -63,7 +63,7 @@ export default function Home({ navigation }) {
 
   const fetchDataFromSingleIp = async (ip) => {
     try {
-      console.log(`Searching for data from: http://${ip}/api/system/info`);
+      //console.log(`Searching for data from: http://${ip}/api/system/info`);
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 4000); // 12 segundos timeout
@@ -81,15 +81,15 @@ export default function Home({ navigation }) {
 
       clearTimeout(timeoutId);
 
-      console.log(`Response status of ${ip}:`, response.status);
-      console.log(`Response Headers ${ip}:`, response.headers);
+      //console.log(`Response status of ${ip}:`, response.status);
+      //console.log(`Response Headers ${ip}:`, response.headers);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const json = await response.json();
-      console.log(`Data received from ${ip}:`, json);
+      //console.log(`Data received from ${ip}:`, json);
       return { ip, data: json, error: false };
     } catch (error) {
       console.error(`Error fetching data from ${ip}:`, error.message);
@@ -129,7 +129,7 @@ export default function Home({ navigation }) {
         return;
       }
 
-      console.log("Starting data search for all IPs...");
+      //console.log("Starting data search for all IPs...");
 
       const results = await Promise.all(
         items.map(async (item) => {
@@ -140,7 +140,7 @@ export default function Home({ navigation }) {
         })
       );
 
-      console.log("Search results:", results);
+      //console.log("Search results:", results);
       setData(results);
     } catch (error) {
       console.error("General error fetching data:", error);
@@ -183,7 +183,7 @@ export default function Home({ navigation }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Data received:", data);
+        //console.log("Data received:", data);
         Alert.alert(
           "Success!",
           `Connectivity OK with ${ip}\nStatus: ${response.status}`
@@ -222,7 +222,7 @@ export default function Home({ navigation }) {
   };
 
   useEffect(() => {
-    console.log("Component assembled, starting initial search...");
+    //console.log("Component assembled, starting initial search...");
     fetchDataFromAllIps();
 
     const intervalId = setInterval(() => {
@@ -236,7 +236,7 @@ export default function Home({ navigation }) {
     }, 1000);
 
     return () => {
-      console.log("Clearing intervals");
+      //console.log("Clearing intervals");
       clearInterval(intervalId);
       clearInterval(countdownInterval);
     };
@@ -244,7 +244,7 @@ export default function Home({ navigation }) {
 
   const openInBrowser = (ip) => {
     const url = `http://${ip}`;
-    console.log(`Opening in browser: ${url}`);
+    //console.log(`Opening in browser: ${url}`);
     Linking.openURL(url).catch((err) =>
       console.error("Error opening browser:", err)
     );
@@ -353,11 +353,7 @@ export default function Home({ navigation }) {
 
         <TouchableOpacity
           style={[styles.actionButton, { backgroundColor: "#2196F3" }]}
-          onPress={() =>
-            navigation.navigate("PaginaIP", {
-              onReturn: () => fetchDataFromAllIps(),
-            })
-          }
+          onPress={() => navigation.navigate("PaginaIP")}
         >
           <MaterialCommunityIcons
             name="clipboard-list"
@@ -390,23 +386,46 @@ export default function Home({ navigation }) {
 
       {/* Indicador de status de rede */}
       {networkStatus && (
-        <View style={styles.networkStatus}>
-          <Text style={styles.networkStatusText}>
-            Network: {networkStatus.type} |{" "}
-            {networkStatus.isConnected ? "Conected" : "Desconected"}
-          </Text>
-          {networkStatus?.isConnected && (
-            <Text
-              style={{
-                fontSize: 12,
-                color: "#555",
-                marginBottom: 8,
-                alignSelf: "center",
-              }}
-            >
-              Refresh: {countdown}s
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "60%",
+            marginRight: 5,
+            gap: 30,
+          }}
+        >
+          <View style={styles.networkStatus}>
+            <Text style={styles.networkStatusText}>
+              Network: {networkStatus.type} |{" "}
+              {networkStatus.isConnected ? "Conected" : "Desconected"}
             </Text>
-          )}
+            {networkStatus?.isConnected && (
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: "#555",
+                  marginBottom: 8,
+                  alignSelf: "center",
+                }}
+              >
+                Refresh: {countdown}s
+              </Text>
+            )}
+          </View>
+          <View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#2196F3",
+                padding: 10,
+                borderRadius: 6,
+              }}
+              onPress={() => navigation.navigate("Nanos")}
+            >
+              <Text style={styles.actionText}>Check Nanos</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
