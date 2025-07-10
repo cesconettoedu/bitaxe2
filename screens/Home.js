@@ -315,10 +315,10 @@ export default function Home({ navigation }) {
               !shownAlerts.current.has(item.ip)
             ) {
               Alert.alert(
-                "⚠️ HashRate Baixo",
-                `O IP ${item.ip} está com HashRate de ${hashRateValue}.`
+                "⚠️ HashRate LOW",
+                `IP ${item.ip} has a HashRate of ${hashRateValue}.`
               );
-              shownAlerts.current.add(item.ip); // marca como já mostrado
+              shownAlerts.current.add(item.ip);
             }
 
             return (
