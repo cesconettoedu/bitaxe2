@@ -6,6 +6,7 @@ const Infocard = ({
   title,
   ipIndividual,
   hash,
+  bestDiff,
   bestSesionDiff,
   AsicT,
   VrT,
@@ -30,12 +31,18 @@ const Infocard = ({
       </View>
       <Text style={styles.titleIp}>IP: {ipIndividual}</Text>
       <View style={styles.inline}>
-        <Text style={styles.value}>{formatHashrate(hash)}</Text>
+        <Text style={[styles.value, { fontWeight: "bold" }]}>
+          {formatHashrate(hash)}
+        </Text>
         <Text>{(InputVol / 1000).toFixed(1)} V</Text>
       </View>
-      <Text style={styles.value}>A: {AsicT.toFixed(1)} °C</Text>
-      <Text style={styles.value}>Vr: {VrT.toFixed(1)} °C</Text>
-      <Text style={styles.value}>Best Diff: {bestSesionDiff}</Text>
+      <Text style={styles.value}>{AsicT.toFixed(1)} °C - Asic T </Text>
+      <Text style={styles.value}>{VrT.toFixed(1)} °C - Vr T </Text>
+      <Text style={styles.value}>Best Diff:</Text>
+      <View style={styles.inlineB}>
+        <Text style={[styles.value, { fontWeight: "bold" }]}>{bestDiff}</Text>
+        <Text style={styles.value}>{bestSesionDiff}</Text>
+      </View>
     </View>
   );
 };
@@ -70,6 +77,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginRight: 5,
+  },
+  inlineB: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 15,
+    marginRight: 5,
   },
   statusIcon: {
     flex: 1,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
@@ -29,6 +29,8 @@ export default function Home({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [networkStatus, setNetworkStatus] = useState(null);
   const [countdown, setCountdown] = useState(10);
+
+  const shownAlerts = useRef(new Set());
 
   const checkNetworkConnection = async () => {
     try {
@@ -304,16 +306,35 @@ export default function Home({ navigation }) {
     return (
       <View style={{ width: cardWidth, margin: cardMargin / 2 }}>
         <TouchableOpacity onPress={() => openInBrowser(item.ip)}>
-          <Infocard
-            work={item.data?.wifiStatus || "off"}
-            title={`${item.data?.stratumUser || "N/A"}`}
-            ipIndividual={item?.ip || "N/A"}
-            hash={item.data?.hashRate || "N/A"}
-            bestSesionDiff={item.data?.bestSessionDiff || "N/A"}
-            AsicT={item.data?.temp || "N/A"}
-            VrT={item.data?.vrTemp || "N/A"}
-            InputVol={item.data?.voltage || "N/A"}
-          />
+          {(() => {
+            const hashRateValue = parseFloat(item.data?.hashRate);
+
+            if (
+              !isNaN(hashRateValue) &&
+              hashRateValue < 999 &&
+              !shownAlerts.current.has(item.ip)
+            ) {
+              Alert.alert(
+                "⚠️ HashRate Baixo",
+                `O IP ${item.ip} está com HashRate de ${hashRateValue}.`
+              );
+              shownAlerts.current.add(item.ip); // marca como já mostrado
+            }
+
+            return (
+              <Infocard
+                work={item.data?.wifiStatus || "off"}
+                title={`${item.data?.stratumUser || "N/A"}`}
+                ipIndividual={item?.ip || "N/A"}
+                hash={item.data?.hashRate || "N/A"}
+                bestSesionDiff={item.data?.bestSessionDiff || "N/A"}
+                bestDiff={item.data?.bestDiff || "N/A"}
+                AsicT={item.data?.temp || "N/A"}
+                VrT={item.data?.vrTemp || "N/A"}
+                InputVol={item.data?.voltage || "N/A"}
+              />
+            );
+          })()}
         </TouchableOpacity>
       </View>
     );
@@ -355,7 +376,7 @@ export default function Home({ navigation }) {
         />
         <TextInput
           style={styles.inputField}
-          placeholder="Type IP (ex: 10.0.0.1)"
+          placeholder="Enter IP (ex: 10.0.0.1)"
           value={text}
           onChangeText={setText}
           autoCapitalize="none"
@@ -371,7 +392,7 @@ export default function Home({ navigation }) {
       {networkStatus && (
         <View style={styles.networkStatus}>
           <Text style={styles.networkStatusText}>
-            Rede: {networkStatus.type} |{" "}
+            Network: {networkStatus.type} |{" "}
             {networkStatus.isConnected ? "Conected" : "Desconected"}
           </Text>
           {networkStatus?.isConnected && (
