@@ -51,8 +51,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     backgroundColor: "#fff",
-    margin: 2,
-    padding: 6,
+    padding: 5,
     borderRadius: 12,
     elevation: 3, // Android shadow
     shadowColor: "#000", // iOS shadow

@@ -10,7 +10,13 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerTitleStyle: { fontSize: 16 },
+          headerStyle: { height: 5 },
+          headerTitleAlign: "center",
+        }}
+      >
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="PaginaIP" component={PaginaIP} />
         <Stack.Screen name="Nanos" component={Nanos} />
