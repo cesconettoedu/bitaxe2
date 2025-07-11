@@ -200,20 +200,46 @@ export default function Home({ navigation }) {
     }
   };
 
+  // const addIp = async () => {
+  //   if (!text.trim()) return Alert.alert("Enter something valid.");
+
+  //   // Valida formato básico de IP
+  //   const ipPattern = /^(\d{1,3}\.){3}\d{1,3}(:\d+)?$/;
+  //   if (!ipPattern.test(text.trim())) {
+  //     return Alert.alert("Invalid IP", "Enter a valid IP (ex: 192.168.1.100)");
+  //   }
+
+  //   const currentItems = await getItems();
+  //   const updatedItems = [
+  //     ...currentItems,
+  //     { id: Date.now(), text: text.trim() },
+  //   ];
+  //   await saveItems(updatedItems);
+  //   setText("");
+  //   await loadStoredItems();
+  //   await fetchDataFromAllIps();
+  //   Alert.alert("Added!");
+  // };
   const addIp = async () => {
     if (!text.trim()) return Alert.alert("Enter something valid.");
 
     // Valida formato básico de IP
     const ipPattern = /^(\d{1,3}\.){3}\d{1,3}(:\d+)?$/;
-    if (!ipPattern.test(text.trim())) {
+    const newIp = text.trim();
+
+    if (!ipPattern.test(newIp)) {
       return Alert.alert("Invalid IP", "Enter a valid IP (ex: 192.168.1.100)");
     }
 
     const currentItems = await getItems();
-    const updatedItems = [
-      ...currentItems,
-      { id: Date.now(), text: text.trim() },
-    ];
+    const alreadyExists = currentItems.some((item) => item.text === newIp);
+
+    if (alreadyExists) {
+      return Alert.alert("Duplicate IP", "This IP is already registered.");
+    }
+
+    const updatedItems = [...currentItems, { id: Date.now(), text: newIp }];
+
     await saveItems(updatedItems);
     setText("");
     await loadStoredItems();
@@ -340,94 +366,202 @@ export default function Home({ navigation }) {
     );
   };
 
+  // return (
+  //   <View style={styles.inputWrapper}>
+  //     <View style={styles.actionButtons}>
+  //       <TouchableOpacity
+  //         style={[styles.actionButton, { backgroundColor: "#4CAF50" }]}
+  //         onPress={diagnosticTest}
+  //       >
+  //         <MaterialCommunityIcons name="magnify" size={18} color="#fff" />
+  //         <Text style={styles.actionText}>Test</Text>
+  //       </TouchableOpacity>
+
+  //       <TouchableOpacity
+  //         style={[styles.actionButton, { backgroundColor: "#2196F3" }]}
+  //         onPress={() => navigation.navigate("PaginaIP")}
+  //       >
+  //         <MaterialCommunityIcons
+  //           name="clipboard-list"
+  //           size={18}
+  //           color="#fff"
+  //         />
+  //         <Text style={styles.actionText}>IP List</Text>
+  //       </TouchableOpacity>
+  //     </View>
+  //     <View style={styles.inputContainer}>
+  //       <MaterialCommunityIcons
+  //         name="ip-network"
+  //         size={22}
+  //         color="#888"
+  //         style={{ marginRight: 8 }}
+  //       />
+  //       <TextInput
+  //         style={styles.inputField}
+  //         placeholder="Enter IP (ex: 10.0.0.1)"
+  //         value={text}
+  //         onChangeText={setText}
+  //         autoCapitalize="none"
+  //         keyboardType="default"
+  //         placeholderTextColor="#888"
+  //       />
+  //       <TouchableOpacity style={styles.addButton} onPress={addIp}>
+  //         <MaterialCommunityIcons name="plus" size={22} color="#fff" />
+  //       </TouchableOpacity>
+  //     </View>
+
+  //     {/* Indicador de status de rede */}
+  //     {networkStatus && (
+  //       <View
+  //         style={{
+  //           flexDirection: "row",
+  //           justifyContent: "center",
+  //           alignItems: "center",
+  //           width: "60%",
+  //           marginRight: 5,
+  //           gap: 30,
+  //         }}
+  //       >
+  //         <View style={styles.networkStatus}>
+  //           <Text style={styles.networkStatusText}>
+  //             Network: {networkStatus.type} |{" "}
+  //             {networkStatus.isConnected ? "Conected" : "Desconected"}
+  //           </Text>
+  //           {networkStatus?.isConnected && (
+  //             <Text
+  //               style={{
+  //                 fontSize: 12,
+  //                 color: "#555",
+  //                 marginBottom: 8,
+  //                 alignSelf: "center",
+  //               }}
+  //             >
+  //               Refresh: {countdown}s
+  //             </Text>
+  //           )}
+  //         </View>
+  //         <View>
+  //           <TouchableOpacity
+  //             style={{
+  //               backgroundColor: "#2196F3",
+  //               padding: 10,
+  //               borderRadius: 6,
+  //             }}
+  //             onPress={() => navigation.navigate("Nanos")}
+  //           >
+  //             <Text style={styles.actionText}>Check Nanos</Text>
+  //           </TouchableOpacity>
+  //         </View>
+  //       </View>
+  //     )}
+
+  //     <FlatList
+  //       contentContainerStyle={styles.containerFlat}
+  //       data={data}
+  //       keyExtractor={(item) => item.ip}
+  //       renderItem={({ item }) => <ItemCard item={item} />}
+  //       numColumns={numColumns}
+  //       ListEmptyComponent={
+  //         <Text style={styles.emptyText}>
+  //           No data loaded. Add IPs to get started.
+  //         </Text>
+  //       }
+  //       refreshing={refreshing}
+  //       onRefresh={handleRefresh}
+  //     />
+  //   </View>
+  // );
+
   return (
-    <View style={styles.inputWrapper}>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: "#4CAF50" }]}
-          onPress={diagnosticTest}
-        >
-          <MaterialCommunityIcons name="magnify" size={18} color="#fff" />
-          <Text style={styles.actionText}>Test</Text>
-        </TouchableOpacity>
+    <View style={{ flex: 1, marginBottom: 50 }}>
+      <View style={styles.inputWrapper}>
+        <View style={styles.actionButtons}>
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: "#4CAF50" }]}
+            onPress={diagnosticTest}
+          >
+            <MaterialCommunityIcons name="magnify" size={18} color="#fff" />
+            <Text style={styles.actionText}>Test</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: "#2196F3" }]}
-          onPress={() => navigation.navigate("PaginaIP")}
-        >
-          <MaterialCommunityIcons
-            name="clipboard-list"
-            size={18}
-            color="#fff"
-          />
-          <Text style={styles.actionText}>IP List</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.inputContainer}>
-        <MaterialCommunityIcons
-          name="ip-network"
-          size={22}
-          color="#888"
-          style={{ marginRight: 8 }}
-        />
-        <TextInput
-          style={styles.inputField}
-          placeholder="Enter IP (ex: 10.0.0.1)"
-          value={text}
-          onChangeText={setText}
-          autoCapitalize="none"
-          keyboardType="default"
-          placeholderTextColor="#888"
-        />
-        <TouchableOpacity style={styles.addButton} onPress={addIp}>
-          <MaterialCommunityIcons name="plus" size={22} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Indicador de status de rede */}
-      {networkStatus && (
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "60%",
-            marginRight: 5,
-            gap: 30,
-          }}
-        >
-          <View style={styles.networkStatus}>
-            <Text style={styles.networkStatusText}>
-              Network: {networkStatus.type} |{" "}
-              {networkStatus.isConnected ? "Conected" : "Desconected"}
-            </Text>
-            {networkStatus?.isConnected && (
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: "#555",
-                  marginBottom: 8,
-                  alignSelf: "center",
-                }}
-              >
-                Refresh: {countdown}s
-              </Text>
-            )}
-          </View>
-          <View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#2196F3",
-                padding: 10,
-                borderRadius: 6,
-              }}
-              onPress={() => navigation.navigate("Nanos")}
-            >
-              <Text style={styles.actionText}>Check Nanos</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: "#2196F3" }]}
+            onPress={() => navigation.navigate("PaginaIP")}
+          >
+            <MaterialCommunityIcons
+              name="clipboard-list"
+              size={18}
+              color="#fff"
+            />
+            <Text style={styles.actionText}>IP List</Text>
+          </TouchableOpacity>
         </View>
-      )}
+
+        <View style={styles.inputContainer}>
+          <MaterialCommunityIcons
+            name="ip-network"
+            size={22}
+            color="#888"
+            style={{ marginRight: 8 }}
+          />
+          <TextInput
+            style={styles.inputField}
+            placeholder="Enter IP (ex: 10.0.0.1)"
+            value={text}
+            onChangeText={setText}
+            autoCapitalize="none"
+            keyboardType="default"
+            placeholderTextColor="#888"
+          />
+          <TouchableOpacity style={styles.addButton} onPress={addIp}>
+            <MaterialCommunityIcons name="plus" size={22} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
+        {networkStatus && (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "60%",
+              marginRight: 5,
+              gap: 30,
+            }}
+          >
+            <View style={styles.networkStatus}>
+              <Text style={styles.networkStatusText}>
+                Network: {networkStatus.type} |{" "}
+                {networkStatus.isConnected ? "Conected" : "Desconected"}
+              </Text>
+              {networkStatus?.isConnected && (
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: "#555",
+                    marginBottom: 8,
+                    alignSelf: "center",
+                  }}
+                >
+                  Refresh: {countdown}s
+                </Text>
+              )}
+            </View>
+            <View>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#2196F3",
+                  padding: 10,
+                  borderRadius: 6,
+                }}
+                onPress={() => navigation.navigate("Nanos")}
+              >
+                <Text style={styles.actionText}>Check Nanos</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </View>
 
       <FlatList
         contentContainerStyle={styles.containerFlat}
@@ -452,7 +586,7 @@ const styles = StyleSheet.create({
 
   containerFlat: {
     marginTop: 10,
-    alignItems: "flex-start",
+    alignItems: "center",
   },
   networkStatus: {
     backgroundColor: "#e8f5e8",
@@ -473,7 +607,7 @@ const styles = StyleSheet.create({
   },
   ///////////
   inputWrapper: {
-    marginBottom: 15,
+    marginBottom: 0,
     alignItems: "center",
   },
 

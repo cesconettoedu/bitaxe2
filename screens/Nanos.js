@@ -50,12 +50,17 @@ export default function Nanos() {
       return Alert.alert("Invalid IP", "Example: 10.0.0.42");
     }
 
-    const alreadyExists = nanoIps.some((item) => item.ip === trimmed);
-    if (alreadyExists) {
-      return Alert.alert("IP already added.");
+    const normalizedInput = trimmed;
+    const existing = nanoIps.find((item) => item.ip.trim() === normalizedInput);
+
+    if (existing) {
+      return Alert.alert(
+        "IP already added",
+        `${normalizedInput} is already in the list.`
+      );
     }
 
-    const updated = [...nanoIps, { id: Date.now(), ip: trimmed }];
+    const updated = [...nanoIps, { id: Date.now(), ip: normalizedInput }];
     await saveNanoIps(updated);
     setText("");
     setNanoIps(updated);
