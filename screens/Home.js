@@ -362,6 +362,7 @@ export default function Home({ navigation }) {
             ipIndividual={item?.ip || "N/A"}
             hashRate={item.data?.hashRate || "N/A"}
             hashAvg={item.data?.hashAvg || "N/A"}
+            diffAccepted={item.data?.diffAccepted || "N/A"}
             foundBlocks={item.data?.foundBlocks || "0"}
           />
         </TouchableOpacity>

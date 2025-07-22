@@ -1,14 +1,33 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const InfocardNano = ({ ipIndividual, hashRate, hashAvg, foundBlocks }) => {
+const InfocardNano = ({
+  ipIndividual,
+  hashRate,
+  hashAvg,
+  diffAccepted,
+  foundBlocks,
+}) => {
   function formatHashrate(hash) {
     if (hash >= 1000) return (hash / 1000000).toFixed(2) + " TH/s";
     if (hash <= 999) return hash.toFixed(2) + " GH/s";
   }
 
+  function formatDifficulty(diff) {
+    if (diff >= 1e12) {
+      return (diff / 1e12).toFixed(2) + " T";
+    } else if (diff >= 1e9) {
+      return (diff / 1e9).toFixed(2) + " G";
+    } else if (diff >= 1e6) {
+      return (diff / 1e6).toFixed(2) + " M";
+    } else {
+      return diff;
+    }
+  }
+
   useEffect(() => {
     formatHashrate();
+    formatDifficulty();
   }, []);
 
   return (
@@ -22,6 +41,12 @@ const InfocardNano = ({ ipIndividual, hashRate, hashAvg, foundBlocks }) => {
       <Text style={styles.titleIp}>IP: {ipIndividual}</Text>
       <Text style={styles.titleIp}>Hash: {formatHashrate(hashRate)}</Text>
       <Text style={styles.titleIp}>Avg H: {formatHashrate(hashAvg)}</Text>
+      <Text style={styles.titleIp}>
+        Best diff:{" "}
+        <Text style={{ fontWeight: "bold" }}>
+          {formatDifficulty(diffAccepted)}
+        </Text>
+      </Text>
       <Text style={styles.titleIp}>foundBlocks: {foundBlocks}</Text>
     </View>
   );
@@ -47,7 +72,7 @@ const styles = StyleSheet.create({
   titleIp: {
     fontSize: 14,
     color: "#555",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   value: {
     fontSize: 14,
