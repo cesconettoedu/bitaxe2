@@ -1,0 +1,9 @@
+Para nano3s
+
+Ligar o Server no notebook
+
+digitar no browser aqui http://10.0.0.30:3000/summary?ip=10.0.0.41
+
+ver resposta
+
+ajustar o App para receber a resposta

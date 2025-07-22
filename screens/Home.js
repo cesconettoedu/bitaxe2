@@ -23,6 +23,17 @@ const screenWidth = Dimensions.get("window").width;
 const cardMargin = 20;
 const cardWidth = (screenWidth - (numColumns + 2) * cardMargin) / numColumns;
 
+const formatDifficulty = (num) => {
+  if (num === null || num === undefined || isNaN(num)) return "N/A";
+  const units = ["", "K", "M", "G", "T", "P"];
+  let unitIndex = 0;
+  while (num >= 1000 && unitIndex < units.length - 1) {
+    num /= 1000;
+    unitIndex++;
+  }
+  return `${num.toFixed(2)} ${units[unitIndex]}`;
+};
+
 export default function Home({ navigation }) {
   const [data, setData] = useState([]);
   const [text, setText] = useState("");
@@ -30,8 +41,8 @@ export default function Home({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [networkStatus, setNetworkStatus] = useState(null);
   const [countdown, setCountdown] = useState(10);
-
   const [nanoData, setNanoData] = useState([]);
+  const [difficulty, setDifficulty] = useState(null);
 
   const shownAlerts = useRef(new Set());
 
@@ -251,26 +262,6 @@ export default function Home({ navigation }) {
     }
   };
 
-  // const addIp = async () => {
-  //   if (!text.trim()) return Alert.alert("Enter something valid.");
-
-  //   // Valida formato básico de IP
-  //   const ipPattern = /^(\d{1,3}\.){3}\d{1,3}(:\d+)?$/;
-  //   if (!ipPattern.test(text.trim())) {
-  //     return Alert.alert("Invalid IP", "Enter a valid IP (ex: 192.168.1.100)");
-  //   }
-
-  //   const currentItems = await getItems();
-  //   const updatedItems = [
-  //     ...currentItems,
-  //     { id: Date.now(), text: text.trim() },
-  //   ];
-  //   await saveItems(updatedItems);
-  //   setText("");
-  //   await loadStoredItems();
-  //   await fetchDataFromAllIps();
-  //   Alert.alert("Added!");
-  // };
   const addIp = async () => {
     if (!text.trim()) return Alert.alert("Enter something valid.");
 
@@ -298,16 +289,41 @@ export default function Home({ navigation }) {
     Alert.alert("Added!");
   };
 
+  const getBCHDifficulty = async () => {
+    try {
+      const response = await fetch(
+        "https://api.blockchair.com/bitcoin-cash/stats"
+      );
+      const data = await response.json();
+
+      // A dificuldade está neste caminho:
+      const difficulty = data?.data?.difficulty;
+
+      if (difficulty !== undefined) {
+        //console.log("Difficulty BCH:", difficulty);
+        return difficulty;
+      } else {
+        console.warn("Difficulty not found in response");
+        return null;
+      }
+    } catch (error) {
+      console.error("Erro ao buscar difficulty do BCH:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     //console.log("Component assembled, starting initial search...");
     fetchDataFromAllIps();
     fetchNanoData();
+    getBCHDifficulty().then((diff) => setDifficulty(diff));
 
     const intervalId = setInterval(() => {
       console.log("Performing automatic search...");
       fetchDataFromAllIps();
       fetchNanoData();
-      setCountdown(10); // reseta contador após cada fetch
+      getBCHDifficulty().then((diff) => setDifficulty(diff));
+      setCountdown(10);
     }, 10000);
 
     const countdownInterval = setInterval(() => {
@@ -513,8 +529,8 @@ export default function Home({ navigation }) {
               justifyContent: "center",
               alignItems: "center",
               width: "60%",
-              marginRight: 5,
-              gap: 30,
+              marginRight: 0,
+              gap: 20,
               marginBottom: 5,
             }}
           >
@@ -536,6 +552,26 @@ export default function Home({ navigation }) {
                 </Text>
               )}
             </View>
+
+            <View>
+              {difficulty && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: "#000",
+                      marginTop: 0,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
+                  >
+                    BCH Diff:
+                  </Text>
+                  <Text>{formatDifficulty(difficulty)}</Text>
+                </>
+              )}
+            </View>
+
             <View>
               <TouchableOpacity
                 style={{
@@ -572,6 +608,7 @@ export default function Home({ navigation }) {
           borderTopColor: "#ccc",
           flexDirection: "row",
           justifyContent: "space-evenly",
+          top: 5,
         }}
       >
         <Text style={{ paddingTop: 5 }}>White</Text>
